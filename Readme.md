@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг»
 
-* Студент: [Роман Сорокин](https://up.htmlacademy.ru/javascript/22/user/1421741).
-* Наставник: [Дмитрий Аверин](https://htmlacademy.ru/profile/id1061531).
+* Студент: [Роман Сорокин](https://up.htmlacademy.ru/javascript/22/user/1421741)
+* Наставник: [Дмитрий Аверин](https://htmlacademy.ru/profile/id1061531)
 
 ---
 
