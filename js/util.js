@@ -1,5 +1,3 @@
-export {getRandomValue, getValueFloatPoint};
-
 // Функция, возвращающая случайное число
 const getRandomValue = (min, max) => {
   if (min < 0 || max < 0 || min >= max) {
@@ -20,3 +18,5 @@ const getValueFloatPoint = (min, max, placePoint) => {
 };
 
 getValueFloatPoint(1, 3, 2);
+
+export {getRandomValue, getValueFloatPoint};
