@@ -39,7 +39,7 @@ const MAX_Y = 139.80000;
 const RANGE = 5;
 const AVATAR_NUMBER_MIN = 1;
 const AVATAR_NUMBER_MAX = 8
-const ROOMS_MIN = 0;
+const ROOMS_MIN = 1;
 const ROOMS_MAX = 10;
 const PRICE_MIN = 0;
 const PRICE_MAX = 10000;
@@ -84,5 +84,7 @@ const createCardAd = () => {
   }
 }
 
-const similarCardsAd = new Array(10).fill(null).map(() => createCardAd());
+const similarCardsAd = new Array(1).fill(null).map(() => createCardAd());
 similarCardsAd;
+
+export {similarCardsAd};
