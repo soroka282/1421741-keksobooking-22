@@ -13,70 +13,94 @@ const similarListFragment = document.createDocumentFragment();
 const createCardAds = similarCardsAd;
 createCardAds.forEach((element) => {
 
-  const title = element.offer.title;
-  const address = element.offer.address;
-  const price = element.offer.price;
-  const type = element.offer.type;
-  const rooms = element.offer.rooms;
-  const guests = element.offer.guests;
-  const checkin = element.offer.checkin;
-  const checkout = element.offer.checkout;
-  const description = element.offer.description;
-  const features = element.offer.features;
-  const photos = element.offer.photos;
-  const avatar = element.author.avatar;
-
   //Клонируем шаблон
   const adElement = adTemplate.cloneNode(true);
 
   //находим необходимый класс в разметке
   //проверяем, есть ли необходимые данные в массиве
   //записываем полученные данные в разметку, либо прячем при их отсутсвии
-  const titleElement = adElement.querySelector('.popup__title');
-  title ? titleElement.textContent = title : titleElement.classList.add('hidden');
 
-  const addressElement = adElement.querySelector('.popup__text--address');
-  address ? addressElement.textContent = address : addressElement.classList.add('hidden');
+  const makeMarkup = (data, selector, text = '') => {
+    if(data) {
+      adElement.querySelector(selector).textContent = data + text;
+    } else {
+      adElement.querySelector(selector).classList.add('hidden');
+    }
+  };
+  //получаем заголовок, адресс, описание, аватар, цену жилья в разметке
+  makeMarkup(element.offer.title, '.popup__title');
+  makeMarkup(element.offer.address, '.popup__text--address');
+  makeMarkup(element.offer.description, '.popup__description');
+  makeMarkup(element.author.avatar, '.popup__avatar');
+  makeMarkup(element.offer.price, '.popup__text--price', ' ₽/ночь');
 
-  const priceElement = adElement.querySelector('.popup__text--price');
-  price ? priceElement.textContent = price + ' ₽/ночь': priceElement.classList.add('hidden');
+  //получаем тип жилья в разметке
+  const makeMarkupTypeHouse = (data, selector) => {
+    if(data) {
+      adElement.querySelector(selector).textContent = showHousingMatches(data);
+    } else {
+      adElement.querySelector(selector).classList.add('hidden');
+    }
+  };
+  makeMarkupTypeHouse(element.offer.type, '.popup__type');
 
-  const typeElement = adElement.querySelector('.popup__type');
-  type ? typeElement.textContent = showHousingMatches(type) : typeElement.classList.add('hidden');
+  //получаем количество гостей и комнат в разметке
+  const makeMarkupRoomsGuests = (rooms, guests, selector) => {
 
-  //добавляем массивы склоняемых слов и функцию для их склонения
-  const roomTextForms = ['комната', 'комнаты', 'комнат'];
-  const guestTextForms = ['гостя', 'гостей', 'гостей'];
-  const CapacityElement = adElement.querySelector('.popup__text--capacity');
-  rooms && guests ?
-    CapacityElement.textContent = rooms  + ' ' + showDeclensionOfWord(rooms, roomTextForms) + ' для ' + guests + ' ' + showDeclensionOfWord(guests, guestTextForms)
-    : CapacityElement.classList.add('hidden');
+    //добавляем массивы склоняемых слов
+    const roomTextForms = ['комната', 'комнаты', 'комнат'];
+    const guestTextForms = ['гостя', 'гостей', 'гостей'];
 
-  const timeElement = adElement.querySelector('.popup__text--time');
-  checkin && checkout ?
-    timeElement.textContent = 'Заезд после ' + checkin + ' , выезд до ' + checkout
-    : timeElement.classList.add('hidden');
+    //добавляем функцию для их склонения
+    const declensionOfRoom = showDeclensionOfWord(rooms, roomTextForms);
+    const declensionOfGuests = showDeclensionOfWord(guests, guestTextForms);
 
-  const descriptionElement = adElement.querySelector('.popup__description');
-  description
-    ? descriptionElement.textContent = description
-    : descriptionElement.classList.add('hidden');
+    //ищем подходящий селектор
+    const capacityElement = adElement.querySelector(selector);
 
-  const featuresElement = adElement.querySelector('.popup__features')
-  featuresElement.innerHTML = '';
-  features.forEach(el => {
-    featuresElement.insertAdjacentHTML('beforeend', el.map((feature => '<li class="popup__feature popup__feature--' + feature +  '"></li>')).join(''));
-  });
+    if(rooms && guests) {
+      capacityElement.textContent = `${rooms} ${declensionOfRoom} для ${guests} ${declensionOfGuests}`;
+    } else {
+      capacityElement.classList.add('hidden');
+    }
+  };
+  makeMarkupRoomsGuests(element.offer.rooms, element.offer.guests, '.popup__text--capacity');
 
-  const photosElement = adElement.querySelector('.popup__photos');
-  photosElement.innerHTML = '';
-  photos.forEach((el) => {
-    photosElement.insertAdjacentHTML('beforeend', el.map((photo =>'<img src=" ' + photo + ' " class="popup__photo" width="45" height="40" alt="Фотография жилья">')).join(''));
-  });
+  //получаем дату заезда и выезда в разметке
+  const makeMarkupCheckin = (checkin, checkout, selector) => {
+    const timeElement = adElement.querySelector(selector);
 
-  const avatarElement =  adElement.querySelector('.popup__avatar');
-  avatarElement.src = avatar;
-  avatar ? avatarElement.src : avatarElement.classList.add('hidden');
+    if(checkin && checkout) {
+      timeElement.textContent = `Заезд после ${checkin}, выезд до ${checkout}`;
+    } else {
+      timeElement.classList.add('hidden');
+    }
+  };
+  makeMarkupCheckin(element.offer.checkin, element.offer.checkout, '.popup__text--time');
+
+  //получаем список фич в разметке
+  const getFeaturesInMarkup = (data, selector) => {
+    const featuresElement = adElement.querySelector(selector);
+    featuresElement.innerHTML = '';
+    data.forEach(el => {
+      featuresElement.
+        insertAdjacentHTML('beforeend', el.map((feature => `<li class="popup__feature popup__feature--${feature}"></li>`))
+          .join(''));
+    });
+  };
+  getFeaturesInMarkup(element.offer.features, '.popup__features');
+
+  //получаем список фото в разметке
+  const getPhotosInMarkup = (data, selector) => {
+    const photosElement = adElement.querySelector(selector);
+    photosElement.innerHTML = '';
+    data.forEach(el => {
+      photosElement.
+        insertAdjacentHTML('beforeend', el.map((photo =>`<img src="${photo}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`))
+          .join(''));
+    });
+  };
+  getPhotosInMarkup(element.offer.photos, '.popup__photos');
 
   //вставляем данные в рамзетку
   similarListFragment.appendChild(adElement);
