@@ -1,6 +1,5 @@
 import {similarCardsAd} from './data.js';
-import {showDeclensionOfWord} from './showDeclensionOfWord.js';
-import {showHousingMatches} from './showHousingMatches.js';
+import {showDeclensionOfWord, showHousingMatches} from './util.js';
 
 // блок вставки объявления
 const canvasBlock = document.querySelector('.map__canvas');

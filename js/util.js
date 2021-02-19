@@ -1,3 +1,25 @@
+//функция, связывающая тип жилья
+const HouseTypes = {
+  flat : 'Квартира',
+  bungalow : 'Бунгало',
+  house : 'Дом',
+  palace : 'Дворец',
+}
+
+const showHousingMatches = (housing) => {
+  return HouseTypes[housing];
+};
+
+// Функция для склонения слов;
+const showDeclensionOfWord = (number, textForms) => {
+  number = Math.abs(number) % 100;
+  const num = number % 10;
+  if (number > 10 && number < 20) { return textForms[2]; }
+  if (num > 1 && num < 5) { return textForms[1]; }
+  if (num == 1) { return textForms[0]; }
+  return textForms[2];
+};
+
 // Функция, возвращающая случайное число
 const getRandomValue = (min, max) => {
   if (min < 0 || max < 0 || min >= max) {
@@ -5,8 +27,6 @@ const getRandomValue = (min, max) => {
   }
   return Math.round(Math.random() * (max - min) + min);
 };
-
-getRandomValue(0, 2);
 
 // Функция, возвращающая случайное число с плавающей точкой;
 const getValueFloatPoint = (min, max, placePoint) => {
@@ -17,6 +37,4 @@ const getValueFloatPoint = (min, max, placePoint) => {
   return val.toFixed(placePoint);
 };
 
-getValueFloatPoint(1, 3, 2);
-
-export {getRandomValue, getValueFloatPoint};
+export {getRandomValue, getValueFloatPoint, showDeclensionOfWord, showHousingMatches};
