@@ -27,3 +27,39 @@ timeInInput.addEventListener('input', function() {
 timeOutInput.addEventListener('input', function() {
   timeInInput.selectedIndex = timeOutInput.selectedIndex ;
 });
+
+
+const adForm = document.querySelector('.ad-form');
+const AdFormFieldset = document.querySelectorAll('fieldset');
+const mapFilters = document.querySelector('.map__filters');
+const mapFiltersSelect = document.querySelectorAll('.map__filter');
+const mapFiltersFeatures = document.querySelectorAll('.map__features');
+
+//добавляем класс disabled форме и фильтру, если карта не активировалась
+adForm.classList.add('ad-form--disabled');
+mapFilters.classList.add('map__filters--disabled');
+
+
+// функция, добавляющая атрибут disabled
+const addAttribute = (variable) => {
+  variable.forEach(i => i.setAttribute('disabled', ''));
+}
+
+// функция, удаляющая атрибут disabled
+const removeAttribute = (variable) => {
+  variable.forEach(i => i.removeAttribute('disabled'));
+};
+
+//добавляем атрибут disabled, если карта не активировалась
+addAttribute(AdFormFieldset);
+addAttribute(mapFiltersSelect);
+addAttribute(mapFiltersFeatures);
+
+export {
+  adForm,
+  mapFilters,
+  AdFormFieldset,
+  mapFiltersSelect,
+  removeAttribute,
+  mapFiltersFeatures
+};

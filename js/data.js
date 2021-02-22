@@ -56,9 +56,6 @@ const getRandomArray = (arr) => {
   return results;
 };
 
-const locationX = getValueFloatPoint(MIN_X, MAX_X, RANGE);
-const locationY = getValueFloatPoint(MIN_Y, MAX_Y, RANGE);
-
 const createCardAd = () => {
   return {
     author: {
@@ -66,7 +63,7 @@ const createCardAd = () => {
     },
     offer: {
       title: TITLE_DESCRIPTION,
-      address: locationX + ', ' + locationY,
+      address: getValueFloatPoint(MIN_X, MAX_X, RANGE) + ', ' + getValueFloatPoint(MIN_Y, MAX_Y, RANGE),
       price: getRandomValue(PRICE_MIN, PRICE_MAX) + '',
       type: getRandomArrayElement(TYPE_HOTEL),
       rooms: getRandomValue(ROOMS_MIN, ROOMS_MAX),
@@ -78,13 +75,12 @@ const createCardAd = () => {
       photos: getRandomArray(PHOTOS_HOTEL),
     },
     location: {
-      x: locationX,
-      y: locationY,
+      x: getValueFloatPoint(MIN_X, MAX_X, RANGE),
+      y: getValueFloatPoint(MIN_Y, MAX_Y, RANGE),
     },
   }
 }
 
-const similarCardsAd = new Array(1).fill(null).map(() => createCardAd());
-similarCardsAd;
+const similarCardsAd = () => new Array(10).fill(null).map(() => createCardAd());
 
 export {similarCardsAd};
