@@ -6,7 +6,7 @@ import {
   makeMarkupCheckin,
   getFeaturesInMarkup,
   getPhotosInMarkup
-} from './generationofmarkupad.js';
+} from './genofmarkupad.js';
 
 import {
   adForm,
