@@ -1,3 +1,5 @@
+import {addAttribute, removeAttribute} from './util.js';
+
 //Зависимость минимального значения и плейсхолдера поля «Цена за ночь» от типа жилья
 const MinCostsHousing = {
   bungalow : 0,
@@ -16,7 +18,6 @@ typeHousingInput.addEventListener('input', function() {
 
 //Обработчики событий «Время заезда», «Время выезда»
 //выбор опции одного поля автоматически изменят значение другого
-
 const timeInInput = document.querySelector('#timein');
 const timeOutInput = document.querySelector('#timeout');
 
@@ -28,9 +29,8 @@ timeOutInput.addEventListener('input', function() {
   timeInInput.selectedIndex = timeOutInput.selectedIndex ;
 });
 
-
 const adForm = document.querySelector('.ad-form');
-const AdFormFieldset = document.querySelectorAll('fieldset');
+const adFormFieldset = document.querySelectorAll('fieldset');
 const mapFilters = document.querySelector('.map__filters');
 const mapFiltersSelect = document.querySelectorAll('.map__filter');
 const mapFiltersFeatures = document.querySelectorAll('.map__features');
@@ -39,27 +39,35 @@ const mapFiltersFeatures = document.querySelectorAll('.map__features');
 adForm.classList.add('ad-form--disabled');
 mapFilters.classList.add('map__filters--disabled');
 
+//добавляем атрибут disabled, если карта не активировалась
+const makePageActivated = () => {
+  addAttribute(adFormFieldset, 'disabled');
+  addAttribute(mapFiltersSelect, 'disabled');
+  addAttribute(mapFiltersFeatures, 'disabled');
+};
+makePageActivated();
 
-// функция, добавляющая атрибут disabled
-const addAttribute = (variable) => {
-  variable.forEach(i => i.setAttribute('disabled', ''));
-}
-
-// функция, удаляющая атрибут disabled
-const removeAttribute = (variable) => {
-  variable.forEach(i => i.removeAttribute('disabled'));
+//удаляем атрибут disabled, если карта не активировалась
+const makePageDeactivated = () => {
+  removeAttribute(adFormFieldset, 'disabled');
+  removeAttribute(mapFiltersSelect, 'disabled');
+  removeAttribute(mapFiltersFeatures, 'disabled');
 };
 
-//добавляем атрибут disabled, если карта не активировалась
-addAttribute(AdFormFieldset);
-addAttribute(mapFiltersSelect);
-addAttribute(mapFiltersFeatures);
+//связывание значения поля адреса с расположением "главной" метки
+const addressInput = document.querySelector('#address');
+const setCoordinates = (variables, evt) => {
+  const placePoint = 5;
+  variables.value = ` ${(evt.target.getLatLng().lat).toFixed(placePoint)} , ${(evt.target.getLatLng().lng).toFixed(placePoint)}`;
+};
 
 export {
   adForm,
   mapFilters,
-  AdFormFieldset,
+  adFormFieldset,
   mapFiltersSelect,
-  removeAttribute,
-  mapFiltersFeatures
+  mapFiltersFeatures,
+  makePageDeactivated,
+  addressInput,
+  setCoordinates
 };

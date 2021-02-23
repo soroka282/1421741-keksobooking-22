@@ -37,4 +37,21 @@ const getValueFloatPoint = (min, max, placePoint) => {
   return val.toFixed(placePoint);
 };
 
-export {getRandomValue, getValueFloatPoint, showDeclensionOfWord, showHousingMatches};
+// функция, добавляющая атрибут disabled
+const addAttribute = (variable, attribute) => {
+  variable.forEach(i => i.setAttribute(attribute, ''));
+}
+
+// функция, удаляющая атрибут disabled
+const removeAttribute = (variable, attribute) => {
+  variable.forEach(i => i.removeAttribute(attribute));
+};
+
+export {
+  getRandomValue,
+  getValueFloatPoint,
+  showDeclensionOfWord,
+  showHousingMatches,
+  addAttribute,
+  removeAttribute
+};

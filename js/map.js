@@ -11,10 +11,9 @@ import {
 import {
   adForm,
   mapFilters,
-  AdFormFieldset,
-  mapFiltersSelect,
-  removeAttribute,
-  mapFiltersFeatures
+  makePageDeactivated,
+  addressInput,
+  setCoordinates
 } from './form.js';
 
 /* global L:readonly */
@@ -25,9 +24,7 @@ const map = L.map('map-canvas')
   .on('load', () => {
     adForm.classList.remove('ad-form--disabled');
     mapFilters.classList.remove('map__filters--disabled');
-    removeAttribute(AdFormFieldset);
-    removeAttribute(mapFiltersSelect);
-    removeAttribute(mapFiltersFeatures);
+    makePageDeactivated();
   })
   .setView({
     lat: 35.6895,
@@ -42,10 +39,10 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 
 //добавляем "главный" маркер
 const mainIcon = L.icon({
-  iconUrl: '../img/main-pin.svg',
+  iconUrl: 'img/main-pin.svg',
   iconSize: [52, 52],
   iconAnchor: [26, 52],
-  shadowUrl: '../leaflet/images/marker-shadow.png',
+  shadowUrl: 'leaflet/images/marker-shadow.png',
   shadowSize: [80, 60],
   shadowAnchor: [25, 60],
 });
@@ -62,21 +59,19 @@ const mainPoint = L.marker(
 );
 mainPoint.addTo(map);
 
-//связывание значения поля адреса с расположением "главной" метки
+//событие изменения координат "главной" метки
 mainPoint.on('moveend', (evt) => {
-  const placePoint = 5;
-  const addressInput = document.querySelector('#address');
-  addressInput.value = ` ${(evt.target.getLatLng().lat).toFixed(placePoint)} , ${(evt.target.getLatLng().lng).toFixed(placePoint)}`;
+  setCoordinates(addressInput, evt);
 });
 
 //добавляем массив "обычных" меткок
 createCardAds.forEach((element) => {
 
   const icon = L.icon({
-    iconUrl: '../img/pin.svg',
+    iconUrl: 'img/pin.svg',
     iconSize: [52, 52],
     iconAnchor: [26, 52],
-    shadowUrl: '../leaflet/images/marker-shadow.png',
+    shadowUrl: 'leaflet/images/marker-shadow.png',
     shadowSize: [80, 60],
     shadowAnchor: [25, 60],
   });
