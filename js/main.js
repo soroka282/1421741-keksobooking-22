@@ -1,3 +1,7 @@
 import './data.js';
 import './form.js';
-import './map.js';
+import {getCoordMainPointDefault} from './map.js';
+
+const getCoordPointDefault = () => {getCoordMainPointDefault()};
+
+export {getCoordPointDefault};

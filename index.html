@@ -167,7 +167,7 @@
           </div>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--submit">
-          <button class="ad-form__submit" type="submit">Опубликовать</button>
+          <button class="ad-form__submit" type="submit" enctype="multipart/form-data">Опубликовать</button>
           или <button class="ad-form__reset" type="reset">очистить</button>
         </fieldset>
       </form>
@@ -226,6 +226,13 @@
     <div class="error">
       <p class="error__message">Ошибка размещения объявления</p>
       <button type="button" class="error__button">Попробовать снова</button>
+    </div>
+  </template>
+
+   <!-- Сообщение об ошибке соединения с сервером -->
+   <template id="error-server">
+    <div class="error-server">
+      <p class="error-server__message">При загрузке данных<br> произошла ошибка запроса</p>
     </div>
   </template>
 
