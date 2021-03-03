@@ -12,6 +12,7 @@ import {
 import {setZIndexElem} from './util.js';
 
 const ALERT_SHOW_TIME = 4000;
+
 //функция, показывающая попап при ошибке загрузки сервера
 const showErrorPopupServer = () => {
   const errorPopupServerTemplate = document.querySelector('#error-server').content.querySelector('.error-server');

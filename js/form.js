@@ -139,9 +139,7 @@ roomNumberSelect.addEventListener('input', (evt) => {
   onRoomsNumberSelect(evt.target.value);
 });
 
-//////////////////////////
-
-//находим шаблон в разметке
+//находим шаблоны в разметке
 const successPopupTemplate = document.querySelector('#success').content.querySelector('.success');
 const errorPopupTemplate = document.querySelector('#error').content.querySelector('.error');
 const errorButton = errorPopupTemplate.querySelector('.error__button');
@@ -176,47 +174,52 @@ const showSuccessPopup = () => {
   const elemClone = successPopupTemplate.cloneNode(true);
   mainBlock.append(elemClone);
   setZIndexElem(canvasBlock, Z_INDEX_OVERLAY);
-}
 
-//обработчики событий скрытия "удачного" попапа
-document.addEventListener('click', () => {
-  delPopup('.success');
-  setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
-});
-
-document.addEventListener('keydown', (evt) => {
-  if (isEscEvent(evt)) {
-    evt.preventDefault();
+  //обработчики событий скрытия "удачного" попапа
+  document.addEventListener('click', () => {
     delPopup('.success');
     setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
-  }
-});
+  });
+
+  document.addEventListener('keydown', (evt) => {
+    if (isEscEvent(evt)) {
+      evt.preventDefault();
+      delPopup('.success');
+      setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
+    }
+  });
+}
 
 //функция, показывающая попап при ошибке
 const showErrorPopup = () => {
   const elemClone = errorPopupTemplate.cloneNode(true);
   mainBlock.appendChild(elemClone);
   setZIndexElem(canvasBlock, Z_INDEX_OVERLAY);
-}
 
-//обработчики событий скрытия попапа, показывающего ошибку
-document.addEventListener('click', () => {
-  delPopup('.error');
-  setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
-});
-
-errorButton.addEventListener('click', () => {
-  delPopup('.error');
-  setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
-});
-
-document.addEventListener('keydown', (evt) => {
-  if (isEscEvent(evt)) {
-    evt.preventDefault(evt);
+  //обработчики событий скрытия попапа, показывающего ошибку
+  document.addEventListener('click', () => {
     delPopup('.error');
     setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
-  }
-});
+  });
+
+  errorButton.addEventListener('click', () => {
+    delPopup('.error');
+    setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
+  });
+
+  document.addEventListener('keydown', (evt) => {
+    if (isEscEvent(evt)) {
+      evt.preventDefault(evt);
+      delPopup('.error');
+      setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
+    }
+  });
+};
+
+const sendSuccessForm = () => {
+  showSuccessPopup();
+  resetForm();
+};
 
 //функция отправки формы на сервер
 const setUserFormSubmit = () => {
@@ -224,8 +227,7 @@ const setUserFormSubmit = () => {
     evt.preventDefault();
 
     sendData(
-      showSuccessPopup,
-      resetForm,
+      sendSuccessForm,
       showErrorPopup,
       new FormData(evt.target),
     )

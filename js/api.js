@@ -4,14 +4,14 @@ const SIMILAR_AD_COUNT = 10;
 const getData = (onSucsess, onFail) => {
   fetch('https://22.javascript.pages.academy/keksobooking/data')
     .then((response) => response.json())
-    .catch(() => onFail())
     .then((data) => {
-      onSucsess(data.slice(0, SIMILAR_AD_COUNT));
-    });
+      onSucsess(data.slice(0, SIMILAR_AD_COUNT))
+    })
+    .catch(() => onFail())
 };
 
 //отправка формы на сервер
-const sendData = (onSuccess, resetForm, onFail, body) => {
+const sendData = (onSuccess, onFail, body) => {
 
   fetch(
     'https://22.javascript.pages.academy/keksobooking',
@@ -23,14 +23,13 @@ const sendData = (onSuccess, resetForm, onFail, body) => {
     .then((response) => {
       if (response.ok) {
         onSuccess();
-        resetForm();
       } else {
         onFail();
       }
     })
     .catch(() => {
       onFail();
-    });
+    })
 };
 
 export {getData, sendData};
