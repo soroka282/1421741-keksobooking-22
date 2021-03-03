@@ -47,11 +47,23 @@ const removeAttribute = (variable, attribute) => {
   variable.forEach(i => i.removeAttribute(attribute));
 };
 
+
+const isEscEvent = (evt) => {
+  return evt.key === ('Escape' || 'Esc');
+};
+
+//функция, устанавливающя элементу свойство z-index
+const setZIndexElem = (elem, value) => {
+  elem.style.zIndex = value;
+}
+
 export {
   getRandomValue,
   getValueFloatPoint,
   showDeclensionOfWord,
   showHousingMatches,
   addAttribute,
-  removeAttribute
+  removeAttribute,
+  isEscEvent,
+  setZIndexElem
 };

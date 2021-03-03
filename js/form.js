@@ -1,4 +1,13 @@
-import {addAttribute, removeAttribute} from './util.js';
+import {
+  addAttribute,
+  removeAttribute,
+  isEscEvent,
+  setZIndexElem
+} from './util.js';
+
+import {getCoordPointDefault} from './main.js';
+import {canvasBlock} from './genofmarkupad.js';
+import {sendData} from './api.js';
 
 const MinCostsHousing = {
   bungalow : 0,
@@ -7,17 +16,19 @@ const MinCostsHousing = {
   palace : 10000,
 };
 
-const MIN_TITLE_LENGTH = 30;
-const MAX_TITLE_LENGTH = 100;
-const MAX_PRICE_VALUE = 1000000;
-const MIN_PRICE_VALUE = 0;
-
 const roomValues = {
   1: [1],
   2: [1, 2],
   3: [1, 2, 3],
   100: [0],
 };
+
+const MIN_TITLE_LENGTH = 30;
+const MAX_TITLE_LENGTH = 100;
+const MAX_PRICE_VALUE = 1000000;
+const MIN_PRICE_VALUE = 0;
+const Z_INDEX_DEFAULT = 0;
+const Z_INDEX_OVERLAY = -1;
 
 const priceHousingInput = document.querySelector('#price');
 const typeHousingInput = document.querySelector('#type');
@@ -32,6 +43,8 @@ const titleInputForm = document.querySelector('#title');
 const addressInput = document.querySelector('#address');
 const roomNumberSelect = document.querySelector('#room_number');
 const capacityElements = document.querySelector('#capacity');
+const adFormReset = document.querySelector('.ad-form__reset');
+const mainBlock = document.querySelector('main');
 
 //Зависимость минимального значения и плейсхолдера поля «Цена за ночь» от типа жилья
 typeHousingInput.addEventListener('input', function() {
@@ -75,29 +88,29 @@ const setCoordinates = (variables, evt) => {
 };
 
 // валидация поля заголовка объявления
-titleInputForm.addEventListener('input', (evt) => {
-  const valueLength = evt.value.length;
+titleInputForm.addEventListener('input', () => {
+  const valueLength = titleInputForm.value.length;
 
   if (valueLength < MIN_TITLE_LENGTH) {
-    evt.setCustomValidity(`Ещё минимум ${(MIN_TITLE_LENGTH - valueLength)} симв.`);
+    titleInputForm.setCustomValidity(`Ещё минимум ${(MIN_TITLE_LENGTH - valueLength)} симв.`);
   } else if (valueLength > MAX_TITLE_LENGTH) {
-    evt.setCustomValidity(`Удалите лишние ' ${(valueLength - MAX_TITLE_LENGTH)} симв.`);
+    titleInputForm.setCustomValidity(`Удалите лишние ' ${(valueLength - MAX_TITLE_LENGTH)} симв.`);
   } else {
-    evt.setCustomValidity('');
+    titleInputForm.setCustomValidity('');
   }
-  evt.reportValidity();
+  titleInputForm.reportValidity();
 });
 
 //валидация поля "цена за ночь"
-priceHousingInput.addEventListener('input', (evt) => {
-  if (evt.value > MAX_PRICE_VALUE) {
-    evt.setCustomValidity(`Максимум ${MAX_PRICE_VALUE}`);
-  } else if (evt.value < MIN_PRICE_VALUE) {
-    evt.setCustomValidity(`Отрицательные числа не допускаются. Минимум ${MIN_PRICE_VALUE}`);
+priceHousingInput.addEventListener('input', () => {
+  if (priceHousingInput.value > MAX_PRICE_VALUE) {
+    priceHousingInput.setCustomValidity(`Максимум ${MAX_PRICE_VALUE}`);
+  } else if (priceHousingInput.value < MIN_PRICE_VALUE) {
+    priceHousingInput.setCustomValidity(`Отрицательные числа не допускаются. Минимум ${MIN_PRICE_VALUE}`);
   } else {
-    evt.setCustomValidity('');
+    priceHousingInput.setCustomValidity('');
   }
-  evt.reportValidity();
+  priceHousingInput.reportValidity();
 });
 
 //формула для валидации поля "колчисетво комнат и количество мест"
@@ -126,6 +139,103 @@ roomNumberSelect.addEventListener('input', (evt) => {
   onRoomsNumberSelect(evt.target.value);
 });
 
+//находим шаблоны в разметке
+const successPopupTemplate = document.querySelector('#success').content.querySelector('.success');
+const errorPopupTemplate = document.querySelector('#error').content.querySelector('.error');
+const errorButton = errorPopupTemplate.querySelector('.error__button');
+
+//функция, сбрасывающая значения формы
+const resetForm = () => {
+  adForm.reset();
+  mapFilters.reset();
+  getCoordPointDefault();
+};
+
+//функция, удаляет атрибут при его наличии, либо снимает обработчик при его отсутствии
+const delPopup = (attribute) => {
+  document.querySelector(attribute);
+
+  if(document.querySelector(attribute)) {
+    document.querySelector(attribute).remove();
+  } else {
+    document.removeEventListener('click', () => {
+      document.querySelector(attribute).remove();
+    });
+  }
+};
+
+//обработчик событий, сбрасывающий форму при клике на кнопку "сброс"
+adFormReset.addEventListener('click', () => {
+  resetForm();
+});
+
+//функция, показывающая "удачный" попап
+const showSuccessPopup = () => {
+  const elemClone = successPopupTemplate.cloneNode(true);
+  mainBlock.append(elemClone);
+  setZIndexElem(canvasBlock, Z_INDEX_OVERLAY);
+
+  //обработчики событий скрытия "удачного" попапа
+  document.addEventListener('click', () => {
+    delPopup('.success');
+    setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
+  });
+
+  document.addEventListener('keydown', (evt) => {
+    if (isEscEvent(evt)) {
+      evt.preventDefault();
+      delPopup('.success');
+      setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
+    }
+  });
+}
+
+//функция, показывающая попап при ошибке
+const showErrorPopup = () => {
+  const elemClone = errorPopupTemplate.cloneNode(true);
+  mainBlock.appendChild(elemClone);
+  setZIndexElem(canvasBlock, Z_INDEX_OVERLAY);
+
+  //обработчики событий скрытия попапа, показывающего ошибку
+  document.addEventListener('click', () => {
+    delPopup('.error');
+    setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
+  });
+
+  errorButton.addEventListener('click', () => {
+    delPopup('.error');
+    setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
+  });
+
+  document.addEventListener('keydown', (evt) => {
+    if (isEscEvent(evt)) {
+      evt.preventDefault(evt);
+      delPopup('.error');
+      setZIndexElem(canvasBlock, Z_INDEX_DEFAULT);
+    }
+  });
+};
+
+const sendSuccessForm = () => {
+  showSuccessPopup();
+  resetForm();
+};
+
+//функция отправки формы на сервер
+const setUserFormSubmit = () => {
+  adForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    sendData(
+      sendSuccessForm,
+      showErrorPopup,
+      new FormData(evt.target),
+    )
+  });
+};
+
+setUserFormSubmit();
+
 export {
   adForm,
   mapFilters,
@@ -134,5 +244,9 @@ export {
   mapFiltersFeatures,
   makePageDeactivated,
   addressInput,
-  setCoordinates
+  setCoordinates,
+  delPopup,
+  mainBlock,
+  Z_INDEX_DEFAULT,
+  Z_INDEX_OVERLAY
 };

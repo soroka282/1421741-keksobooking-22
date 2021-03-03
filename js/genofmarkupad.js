@@ -2,11 +2,12 @@ import {similarCardsAd} from './data.js';
 import {showDeclensionOfWord, showHousingMatches} from './util.js';
 
 // блок вставки объявления
-// const canvasBlock = document.querySelector('.map__canvas');
+const canvasBlock = document.querySelector('.map__canvas');
 
 // Шаблон карточки объявления
 const adTemplate = document.querySelector('#card').content.querySelector('.popup');
 const similarListFragment = document.createDocumentFragment();
+
 
 //находим необходимый класс в разметке
 //проверяем, есть ли необходимые данные в массиве
@@ -14,6 +15,16 @@ const similarListFragment = document.createDocumentFragment();
 const makeMarkup = (template, data, selector, text = '') => {
   if(data) {
     template.querySelector(selector).textContent = data + text;
+  } else {
+    template.querySelector(selector).classList.add('hidden');
+  }
+};
+
+//получаем аватар в разметке
+const makeMarkupSrc = (template, data, selector) => {
+  if(data) {
+    // template.querySelector(selector).setAttribute('src', data);
+    template.querySelector(selector).src = data;
   } else {
     template.querySelector(selector).classList.add('hidden');
   }
@@ -66,8 +77,7 @@ const getFeaturesInMarkup = (template, data, selector) => {
   featuresElement.innerHTML = '';
   data.forEach(el => {
     featuresElement.
-      insertAdjacentHTML('beforeend', el.map((feature => `<li class="popup__feature popup__feature--${feature}"></li>`))
-        .join(''));
+      insertAdjacentHTML('beforeend', `<li class="popup__feature popup__feature--${el}"></li>`);
   });
 };
 
@@ -77,13 +87,13 @@ const getPhotosInMarkup = (template, data, selector) => {
   photosElement.innerHTML = '';
   data.forEach(el => {
     photosElement.
-      insertAdjacentHTML('beforeend', el.map((photo =>`<img src="${photo}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`))
-        .join(''));
+      insertAdjacentHTML('beforeend', `<img src="${el}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`);
   });
 };
-
 //генерируем необходимые данные из массива
+
 const createCardAds = similarCardsAd();
+
 createCardAds.forEach((element) => {
 
   //Клонируем шаблон
@@ -93,7 +103,7 @@ createCardAds.forEach((element) => {
   makeMarkup(adElement, element.offer.title, '.popup__title');
   makeMarkup(adElement, element.offer.address, '.popup__text--address');
   makeMarkup(adElement, element.offer.description, '.popup__description');
-  makeMarkup(adElement, element.author.avatar, '.popup__avatar');
+  makeMarkupSrc(adElement, element.author.avatar, '.popup__avatar');
   makeMarkup(adElement, element.offer.price, '.popup__text--price', ' ₽/ночь');
 
   //получаем тип жилья в разметке
@@ -109,20 +119,21 @@ createCardAds.forEach((element) => {
   getFeaturesInMarkup(adElement, element.offer.features, '.popup__features');
 
   //получаем список фото в разметке
-  getPhotosInMarkup(adElement, element.offer.photos, '.popup__photos');
+  getPhotosInMarkup(adElement, element.offer.photos, '.popup__photos' );
 
   //вставляем данные в рамзетку
   similarListFragment.appendChild(adElement);
-});
 
-// canvasBlock.appendChild(similarListFragment)
+});
+//canvasBlock.appendChild(similarListFragment)
 
 export {
-  createCardAds,
+  makeMarkupSrc,
   makeMarkup,
   makeMarkupTypeHouse,
   makeMarkupRoomsGuests,
   makeMarkupCheckin,
   getFeaturesInMarkup,
-  getPhotosInMarkup
+  getPhotosInMarkup,
+  canvasBlock
 };
