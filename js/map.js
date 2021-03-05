@@ -1,3 +1,5 @@
+import {sortAds, housingTypeFilter} from './filter.js';
+
 import {
   makeMarkupSrc,
   makeMarkup,
@@ -34,6 +36,7 @@ const SHADOW_SIZE_X = 80;
 const SHADOW_SIZE_Y = 60;
 const SHADOW_ANCHOR_X = 25;
 const SHADOW_ANCHOR_Y = 60;
+const SIMILAR_AD_COUNT = 10;
 
 //добавлеяем карту
 const map = L.map('map-canvas')
@@ -87,66 +90,83 @@ const getCoordMainPointDefault = () => {
 };
 
 const renderPoints = (data) => {
-//добавляем массив "обычных" меткок
-  data.forEach((element) => {
 
-    const icon = L.icon({
-      iconUrl: 'img/pin.svg',
-      iconSize: [ICON_SIZE_X, ICON_SIZE_Y],
-      iconAnchor: [ICON_ANCHOR_X, ICON_ANCHOR_Y],
-      shadowUrl: 'leaflet/images/marker-shadow.png',
-      shadowSize: [SHADOW_SIZE_X, SHADOW_SIZE_Y],
-      shadowAnchor: [SHADOW_ANCHOR_X, SHADOW_ANCHOR_Y],
-    });
+  //добавляем массив "обычных" меткок
+  data
+    .slice()
+    .sort(sortAds)
+    .slice(0, SIMILAR_AD_COUNT)
 
-    const points = L.marker(
-      {
-        lat: element.location.lat,
-        lng: element.location.lng,
-      },
-      {
-        icon: icon,
+    .forEach((element) => {
+
+      const icon = L.icon({
+        iconUrl: 'img/pin.svg',
+        iconSize: [ICON_SIZE_X, ICON_SIZE_Y],
+        iconAnchor: [ICON_ANCHOR_X, ICON_ANCHOR_Y],
+        shadowUrl: 'leaflet/images/marker-shadow.png',
+        shadowSize: [SHADOW_SIZE_X, SHADOW_SIZE_Y],
+        shadowAnchor: [SHADOW_ANCHOR_X, SHADOW_ANCHOR_Y],
       });
+      //создаем новый слой, в который поместим метки
+      const LayerGroup = new L.LayerGroup();
+      LayerGroup.addTo(map);
 
-    // Шаблон карточки объявления
-    const adTemplate = document.querySelector('#card').content.querySelector('.popup');
-    const similarListFragment = document.createDocumentFragment();
-    //Клонируем шаблон
-    const adElement = adTemplate.cloneNode(true);
-
-    //получаем заголовок, адресс, описание, аватар, цену жилья в разметке
-    makeMarkup(adElement, element.offer.title, '.popup__title');
-    makeMarkup(adElement, element.offer.address, '.popup__text--address');
-    makeMarkup(adElement, element.offer.description, '.popup__description');
-    makeMarkupSrc(adElement, element.author.avatar, '.popup__avatar');
-    makeMarkup(adElement, element.offer.price, '.popup__text--price', ' ₽/ночь');
-
-    //получаем тип жилья в разметке
-    makeMarkupTypeHouse(adElement, element.offer.type, '.popup__type');
-
-    //получаем количество гостей и комнат в разметке
-    makeMarkupRoomsGuests(adElement, element.offer.rooms, element.offer.guests, '.popup__text--capacity');
-
-    //получаем дату заезда и выезда в разметке
-    makeMarkupCheckin(adElement, element.offer.checkin, element.offer.checkout, '.popup__text--time');
-
-    //получаем список фич в разметке
-    getFeaturesInMarkup(adElement, element.offer.features, '.popup__features');
-
-    //получаем список фото в разметке
-    getPhotosInMarkup(adElement, element.offer.photos, '.popup__photos' );
-
-    //вставляем данные в рамзетку
-    similarListFragment.appendChild(adElement);
-
-    points
-      .addTo(map)
-      .bindPopup(adElement,
+      //добавляем координаты меток
+      const points = L.marker(
         {
-          keepInView: true,
+          lat: element.location.lat,
+          lng: element.location.lng,
         },
-      );
-  });
+        {
+          icon: icon,
+        });
+
+      //копируем шаблон
+      const similarListFragment = document.createDocumentFragment();
+      const adTemplate = document.querySelector('#card').content.querySelector('.popup');
+      const adElement = adTemplate.cloneNode(true);
+
+      //получаем заголовок, адресс, описание, аватар, цену жилья в разметке
+      makeMarkup(adElement, element.offer.title, '.popup__title');
+      makeMarkup(adElement, element.offer.address, '.popup__text--address');
+      makeMarkup(adElement, element.offer.description, '.popup__description');
+      makeMarkupSrc(adElement, element.author.avatar, '.popup__avatar');
+      makeMarkup(adElement, element.offer.price, '.popup__text--price', ' ₽/ночь');
+
+      //получаем тип жилья в разметке
+      makeMarkupTypeHouse(adElement, element.offer.type, '.popup__type');
+
+      //получаем количество гостей и комнат в разметке
+      makeMarkupRoomsGuests(adElement, element.offer.rooms, element.offer.guests, '.popup__text--capacity');
+
+      //получаем дату заезда и выезда в разметке
+      makeMarkupCheckin(adElement, element.offer.checkin, element.offer.checkout, '.popup__text--time');
+
+      //получаем список фич в разметке
+      getFeaturesInMarkup(adElement, element.offer.features, '.popup__features');
+
+      //получаем список фото в разметке
+      getPhotosInMarkup(adElement, element.offer.photos, '.popup__photos' );
+
+      //вставляем данные в рамзетку
+      similarListFragment.appendChild(adElement);
+
+      //вставляем новые метки в созданный слой
+      points
+        .addTo(LayerGroup)
+        .bindPopup(adElement,
+          {
+            keepInView: true,
+          },
+        );
+
+      //перебираем слои с метками и удаляем предыдущие метки
+      housingTypeFilter.addEventListener('input', () => {
+        LayerGroup.eachLayer(() => {
+          LayerGroup.removeLayer(points);
+        });
+      });
+    });
 };
 
 getData(renderPoints, showErrorPopupServer);

@@ -1,11 +1,12 @@
-const SIMILAR_AD_COUNT = 10;
+import {setTypeHouse} from './filter.js';
 
 //получение данных
 const getData = (onSucsess, onFail) => {
   fetch('https://22.javascript.pages.academy/keksobooking/data')
     .then((response) => response.json())
     .then((data) => {
-      onSucsess(data.slice(0, SIMILAR_AD_COUNT))
+      onSucsess(data);
+      setTypeHouse(() => onSucsess(data));
     })
     .catch(() => onFail())
 };
