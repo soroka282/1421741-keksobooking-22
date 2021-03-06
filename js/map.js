@@ -1,4 +1,4 @@
-import {sortAds, housingTypeFilter} from './filter.js';
+import {housingTypeFilter} from './filter.js';
 
 import {
   makeMarkupSrc,
@@ -89,15 +89,30 @@ const getCoordMainPointDefault = () => {
   mainPoint.setLatLng(L.latLng(LAT_MAIN_POINT, LNG_MAIN_POINT))
 };
 
+///////////////////////
+
+const foo = (data) => {
+  housingTypeFilter.addEventListener('input', (evt)=> {
+    return data.offer.type == evt.target.value;
+  })
+};
+
+const foo2 = (data) => {
+  return data.offer.type === 'flat';
+};
+
 const renderPoints = (data) => {
 
   //добавляем массив "обычных" меткок
   data
     .slice()
-    .sort(sortAds)
+    .filter(foo2)
     .slice(0, SIMILAR_AD_COUNT)
 
     .forEach((element) => {
+
+
+
 
       const icon = L.icon({
         iconUrl: 'img/pin.svg',
@@ -110,6 +125,8 @@ const renderPoints = (data) => {
       //создаем новый слой, в который поместим метки
       const LayerGroup = new L.LayerGroup();
       LayerGroup.addTo(map);
+
+
 
       //добавляем координаты меток
       const points = L.marker(
