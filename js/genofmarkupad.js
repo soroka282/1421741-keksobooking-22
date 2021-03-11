@@ -23,7 +23,6 @@ const makeMarkup = (template, data, selector, text = '') => {
 //получаем аватар в разметке
 const makeMarkupSrc = (template, data, selector) => {
   if(data) {
-    // template.querySelector(selector).setAttribute('src', data);
     template.querySelector(selector).src = data;
   } else {
     template.querySelector(selector).classList.add('hidden');
