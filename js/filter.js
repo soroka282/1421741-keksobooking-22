@@ -1,32 +1,68 @@
-//const DEFAULT_TYPE_HOUSE = 'any';
+import {mapFilters} from './form.js';
 
-const housingTypeFilter = document.querySelector('#housing-type');
+const DEFAULT = 'any';
+const PRICE_LOW = 10000;
+const PRICE_HIGH = 50000;
 
-// const getAdRank = (data) => {
-//   let rank = 0;
+const filterTypeHousing = document.querySelector('#housing-type');
+const filterPriceHousing = document.querySelector('#housing-price');
+const filterGuestsHousing = document.querySelector('#housing-guests');
+const filterRoomsHousing = document.querySelector('#housing-rooms');
+const filterFeatures = document.querySelector('#housing-features');
+const filterFeature = filterFeatures.querySelectorAll('[name="features"]');
 
-//   if (data.offer.type === (housingTypeFilter.value || DEFAULT_TYPE_HOUSE)) {
-//     rank += 2;
-//   }
-//   return rank;
-// };
+const checkType = (data) => {
+  return filterTypeHousing.value === DEFAULT || data.offer.type === filterTypeHousing.value;
+};
 
-// const sortAds = (dataA, dataB) => {
-//   const rankA = getAdRank(dataA);
-//   const rankB = getAdRank(dataB);
+const checkPrice = (data) => {
+  const PriceHousing = {
+    any : DEFAULT,
+    middle : data.offer.price >= PRICE_LOW && data.offer.price <= PRICE_HIGH,
+    low : data.offer.price < PRICE_LOW,
+    high : data.offer.price > PRICE_HIGH,
+  }
+  return PriceHousing[filterPriceHousing.value];
+};
 
-//   return rankB - rankA;
-// }
+const checkRooms = (data) => {
+  return filterRoomsHousing.value === DEFAULT || data.offer.rooms === Number(filterRoomsHousing.value);
+};
 
-const setTypeHouse = (cb) => {
-  housingTypeFilter.addEventListener('input', (evt) => {
-    evt.target.value = housingTypeFilter.value;
+const checkGuests = (data) => {
+  return filterGuestsHousing.value === DEFAULT || data.offer.guests === Number(filterGuestsHousing.value);
+};
+
+const checkFeatures = (data) => {
+
+  for (let i = 0; i < filterFeature.length; i++) {
+    if (filterFeature[i].checked) {
+      if (data.offer.features.indexOf(filterFeature[i].value) === -1) {
+        return false
+      }
+    }
+  }
+  return true
+};
+
+
+const getFilteredAds = (data) => {
+  return (
+    checkType(data) &&
+    checkPrice(data) &&
+    checkRooms(data) &&
+    checkGuests(data) &&
+    checkFeatures(data)
+  )
+};
+
+const setFilterChange = (cb) => {
+  mapFilters.addEventListener('change', () => {
     cb();
   });
 };
 
 export {
-  //sortAds,
-  setTypeHouse,
-  housingTypeFilter
+  setFilterChange,
+  getFilteredAds
 };

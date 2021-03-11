@@ -1,13 +1,12 @@
-import {setTypeHouse} from './filter.js';
+const  URL_GET = 'https://22.javascript.pages.academy/keksobooking/data';
+const  URL_SEND = 'https://22.javascript.pages.academy/keksobooking';
 
 //получение данных
 const getData = (onSucsess, onFail) => {
-  fetch('https://22.javascript.pages.academy/keksobooking/data')
+  fetch(URL_GET)
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
       onSucsess(data);
-      setTypeHouse(() => onSucsess(data));
     })
     .catch(() => onFail())
 };
@@ -16,7 +15,7 @@ const getData = (onSucsess, onFail) => {
 const sendData = (onSuccess, onFail, body) => {
 
   fetch(
-    'https://22.javascript.pages.academy/keksobooking',
+    URL_SEND,
     {
       method: 'POST',
       body,

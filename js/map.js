@@ -1,4 +1,4 @@
-import {housingTypeFilter} from './filter.js';
+import {setFilterChange, getFilteredAds} from './filter.js';
 
 import {
   makeMarkupSrc,
@@ -11,11 +11,11 @@ import {
 } from './genofmarkupad.js';
 
 import {
-  adForm,
-  mapFilters,
   makePageDeactivated,
   addressInput,
-  setCoordinates
+  setCoordinates,
+  adForm,
+  mapFilters
 } from './form.js';
 
 import {showErrorPopupServer} from './showerrorpopupserver.js';
@@ -89,16 +89,13 @@ const getCoordMainPointDefault = () => {
   mainPoint.setLatLng(L.latLng(LAT_MAIN_POINT, LNG_MAIN_POINT))
 };
 
-///////////////////////
-
-const foo = (data) => {
-  housingTypeFilter.addEventListener('input', (evt)=> {
-    return data.offer.type == evt.target.value;
-  })
-};
-
-const foo2 = (data) => {
-  return data.offer.type === 'flat';
+//перебираем слои с метками и удаляем предыдущие метки
+const delPoints = (LayerGroup, points) => {
+  mapFilters.addEventListener('input', () => {
+    LayerGroup.eachLayer(() => {
+      LayerGroup.removeLayer(points);
+    });
+  });
 };
 
 const renderPoints = (data) => {
@@ -106,13 +103,10 @@ const renderPoints = (data) => {
   //добавляем массив "обычных" меткок
   data
     .slice()
-    .filter(foo2)
+    .filter(getFilteredAds)
     .slice(0, SIMILAR_AD_COUNT)
 
     .forEach((element) => {
-
-
-
 
       const icon = L.icon({
         iconUrl: 'img/pin.svg',
@@ -123,10 +117,8 @@ const renderPoints = (data) => {
         shadowAnchor: [SHADOW_ANCHOR_X, SHADOW_ANCHOR_Y],
       });
       //создаем новый слой, в который поместим метки
-      const LayerGroup = new L.LayerGroup();
-      LayerGroup.addTo(map);
-
-
+      const LayerGroupPoints = new L.LayerGroup();
+      LayerGroupPoints.addTo(map);
 
       //добавляем координаты меток
       const points = L.marker(
@@ -170,22 +162,25 @@ const renderPoints = (data) => {
 
       //вставляем новые метки в созданный слой
       points
-        .addTo(LayerGroup)
+        .addTo(LayerGroupPoints)
         .bindPopup(adElement,
           {
             keepInView: true,
           },
         );
 
-      //перебираем слои с метками и удаляем предыдущие метки
-      housingTypeFilter.addEventListener('input', () => {
-        LayerGroup.eachLayer(() => {
-          LayerGroup.removeLayer(points);
-        });
-      });
+      delPoints(LayerGroupPoints, points);
     });
 };
 
-getData(renderPoints, showErrorPopupServer);
+const getSuccess = (data) => {
+  renderPoints(data);
+  setFilterChange(() => renderPoints(data));
+}
 
-export {getCoordMainPointDefault};
+getData((data) => {
+  getSuccess(data);
+  showErrorPopupServer;
+});
+
+export {getCoordMainPointDefault, renderPoints};
