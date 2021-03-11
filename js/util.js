@@ -57,6 +57,15 @@ const setZIndexElem = (elem, value) => {
   elem.style.zIndex = value;
 }
 
+//функция-задержка
+const debounce = (cb, delay) => {
+  let timeout;
+  return () => {
+    if(timeout) clearTimeout(timeout);
+    timeout = setTimeout( cb, delay)
+  };
+};
+
 export {
   getRandomValue,
   getValueFloatPoint,
@@ -65,5 +74,6 @@ export {
   addAttribute,
   removeAttribute,
   isEscEvent,
-  setZIndexElem
+  setZIndexElem,
+  debounce
 };

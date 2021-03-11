@@ -22,6 +22,8 @@ import {showErrorPopupServer} from './showerrorpopupserver.js';
 
 import {getData} from './api.js';
 
+import {debounce} from './util.js';
+
 /* global L:readonly */
 const LAT_CENTER_MAP = 35.6895;
 const LNG_CENTER_MAP =  139.692;
@@ -37,6 +39,7 @@ const SHADOW_SIZE_Y = 60;
 const SHADOW_ANCHOR_X = 25;
 const SHADOW_ANCHOR_Y = 60;
 const SIMILAR_AD_COUNT = 10;
+const RERENDER_DELAY = 500;
 
 //добавлеяем карту
 const map = L.map('map-canvas')
@@ -89,14 +92,13 @@ const getCoordMainPointDefault = () => {
   mainPoint.setLatLng(L.latLng(LAT_MAIN_POINT, LNG_MAIN_POINT))
 };
 
-//перебираем слои с метками и удаляем предыдущие метки
 const delPoints = (LayerGroup, points) => {
   mapFilters.addEventListener('input', () => {
     LayerGroup.eachLayer(() => {
       LayerGroup.removeLayer(points);
     });
   });
-};
+}
 
 const renderPoints = (data) => {
 
@@ -175,7 +177,10 @@ const renderPoints = (data) => {
 
 const getSuccess = (data) => {
   renderPoints(data);
-  setFilterChange(() => renderPoints(data));
+  setFilterChange(debounce(
+    () => renderPoints(data),
+    RERENDER_DELAY,
+  ));
 }
 
 getData((data) => {
