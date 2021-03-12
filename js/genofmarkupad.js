@@ -1,12 +1,12 @@
-import {similarCardsAd} from './data.js';
+// import {similarCardsAd} from './data.js';
 import {showDeclensionOfWord, showHousingMatches} from './util.js';
 
 // блок вставки объявления
 const canvasBlock = document.querySelector('.map__canvas');
 
-// Шаблон карточки объявления
-const adTemplate = document.querySelector('#card').content.querySelector('.popup');
-const similarListFragment = document.createDocumentFragment();
+// // Шаблон карточки объявления
+// const adTemplate = document.querySelector('#card').content.querySelector('.popup');
+// const similarListFragment = document.createDocumentFragment();
 
 
 //находим необходимый класс в разметке
@@ -89,41 +89,41 @@ const getPhotosInMarkup = (template, data, selector) => {
       insertAdjacentHTML('beforeend', `<img src="${el}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`);
   });
 };
-//генерируем необходимые данные из массива
 
-const createCardAds = similarCardsAd();
+// //генерируем необходимые данные из массива
+// const createCardAds = similarCardsAd();
 
-createCardAds.forEach((element) => {
+// createCardAds.forEach((element) => {
 
-  //Клонируем шаблон
-  const adElement = adTemplate.cloneNode(true);
+//   //Клонируем шаблон
+//   const adElement = adTemplate.cloneNode(true);
 
-  //получаем заголовок, адресс, описание, аватар, цену жилья в разметке
-  makeMarkup(adElement, element.offer.title, '.popup__title');
-  makeMarkup(adElement, element.offer.address, '.popup__text--address');
-  makeMarkup(adElement, element.offer.description, '.popup__description');
-  makeMarkupSrc(adElement, element.author.avatar, '.popup__avatar');
-  makeMarkup(adElement, element.offer.price, '.popup__text--price', ' ₽/ночь');
+//   //получаем заголовок, адресс, описание, аватар, цену жилья в разметке
+//   makeMarkup(adElement, element.offer.title, '.popup__title');
+//   makeMarkup(adElement, element.offer.address, '.popup__text--address');
+//   makeMarkup(adElement, element.offer.description, '.popup__description');
+//   makeMarkupSrc(adElement, element.author.avatar, '.popup__avatar');
+//   makeMarkup(adElement, element.offer.price, '.popup__text--price', ' ₽/ночь');
 
-  //получаем тип жилья в разметке
-  makeMarkupTypeHouse(adElement, element.offer.type, '.popup__type');
+//   //получаем тип жилья в разметке
+//   makeMarkupTypeHouse(adElement, element.offer.type, '.popup__type');
 
-  //получаем количество гостей и комнат в разметке
-  makeMarkupRoomsGuests(adElement, element.offer.rooms, element.offer.guests, '.popup__text--capacity');
+//   //получаем количество гостей и комнат в разметке
+//   makeMarkupRoomsGuests(adElement, element.offer.rooms, element.offer.guests, '.popup__text--capacity');
 
-  //получаем дату заезда и выезда в разметке
-  makeMarkupCheckin(adElement, element.offer.checkin, element.offer.checkout, '.popup__text--time');
+//   //получаем дату заезда и выезда в разметке
+//   makeMarkupCheckin(adElement, element.offer.checkin, element.offer.checkout, '.popup__text--time');
 
-  //получаем список фич в разметке
-  getFeaturesInMarkup(adElement, element.offer.features, '.popup__features');
+//   //получаем список фич в разметке
+//   getFeaturesInMarkup(adElement, element.offer.features, '.popup__features');
 
-  //получаем список фото в разметке
-  getPhotosInMarkup(adElement, element.offer.photos, '.popup__photos' );
+//   //получаем список фото в разметке
+//   getPhotosInMarkup(adElement, element.offer.photos, '.popup__photos' );
 
-  //вставляем данные в рамзетку
-  similarListFragment.appendChild(adElement);
+//   //вставляем данные в рамзетку
+//   similarListFragment.appendChild(adElement);
 
-});
+// });
 //canvasBlock.appendChild(similarListFragment)
 
 export {
