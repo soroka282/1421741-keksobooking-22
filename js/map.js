@@ -181,7 +181,7 @@ const getSuccess = (data) => {
     () => renderPoints(data),
     RERENDER_DELAY,
   ));
-}
+};
 
 getData((data) => {
   getSuccess(data);
