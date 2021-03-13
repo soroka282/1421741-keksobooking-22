@@ -8,6 +8,7 @@ import {
 import {getCoordPointDefault} from './main.js';
 import {canvasBlock} from './genofmarkupad.js';
 import {sendData} from './api.js';
+import {adFormHeaderPreview, adFormPhoto, DEFAULT_IMG} from './previewimg.js'
 
 const MinCostsHousing = {
   bungalow : 0,
@@ -149,6 +150,8 @@ const resetForm = () => {
   adForm.reset();
   mapFilters.reset();
   getCoordPointDefault();
+  adFormHeaderPreview.src = DEFAULT_IMG;
+  adFormPhoto.innerHTML = '';
 };
 
 //функция, удаляет атрибут при его наличии, либо снимает обработчик при его отсутствии
@@ -248,5 +251,6 @@ export {
   delPopup,
   mainBlock,
   Z_INDEX_DEFAULT,
-  Z_INDEX_OVERLAY
+  Z_INDEX_OVERLAY,
+  showErrorPopup
 };
