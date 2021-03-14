@@ -1,6 +1,6 @@
 import {
   canvasBlock
-} from './genofmarkupad.js';
+} from './gen-of-markup-ad.js';
 
 import {
   delPopup,

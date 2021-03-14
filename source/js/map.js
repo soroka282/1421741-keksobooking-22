@@ -1,3 +1,5 @@
+import L from 'leaflet';
+
 import {setFilterChange, getFilteredAds} from './filter.js';
 
 import {
@@ -8,7 +10,7 @@ import {
   makeMarkupCheckin,
   getFeaturesInMarkup,
   getPhotosInMarkup
-} from './genofmarkupad.js';
+} from './gen-of-markup-ad.js';
 
 import {
   makePageDeactivated,
@@ -18,13 +20,12 @@ import {
   mapFilters
 } from './form.js';
 
-import {showErrorPopupServer} from './showerrorpopupserver.js';
+import {showErrorPopupServer} from './show-error-popup-server.js';
 
 import {getData} from './api.js';
 
 import {debounce} from './util.js';
 
-/* global L:readonly */
 const LAT_CENTER_MAP = 35.6895;
 const LNG_CENTER_MAP =  139.692;
 const ZOOM_MAP = 12;
