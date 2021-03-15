@@ -65,7 +65,9 @@ const showImgPreview = (inputFormField, filePreview, compareElements) => {
 
       reader.readAsDataURL(file);
     }
-
+    else {
+      showErrorPopup();
+    }
   });
 };
 
