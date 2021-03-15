@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "browser-sync start --server \"build/\" --no-ui --files \"source/**/*.js\"",
-    "test": "eslint js/",
+    "test": "eslint source/**/*.js",
     "build": "webpack --mode production"
   },
   "engines": {
