@@ -25,7 +25,9 @@ const showAvatarPreview = (inputFormField, filePreview, compareElements) => {
       });
       reader.readAsDataURL(file);
     }
-    else {showErrorPopup()}
+    else {
+      showErrorPopup();
+    }
   });
 };
 
@@ -63,7 +65,9 @@ const showImgPreview = (inputFormField, filePreview, compareElements) => {
 
       reader.readAsDataURL(file);
     }
-    else {showErrorPopup()}
+    else {
+      showErrorPopup();
+    }
   });
 };
 

@@ -6,9 +6,9 @@ import {
 } from './util.js';
 
 import {getCoordPointDefault} from './main.js';
-import {canvasBlock} from './genofmarkupad.js';
+import {canvasBlock} from './gen-of-markup-ad.js';
 import {sendData} from './api.js';
-import {adFormHeaderPreview, adFormPhoto, DEFAULT_IMG} from './previewimg.js'
+import {adFormHeaderPreview, adFormPhoto, DEFAULT_IMG} from './preview-img.js'
 
 const MinCostsHousing = {
   bungalow : 0,
